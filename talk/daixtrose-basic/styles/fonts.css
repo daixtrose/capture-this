@@ -1,0 +1,98 @@
+/* Daixtrose Basic Theme — Font Definitions & Overrides */
+
+/* --- Atkinson Hyperlegible Next (Variable Font) --- */
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('/fonts/atkinson-hyperlegible-next/AtkinsonHyperlegibleNext[wght].woff2') format('woff2-variations');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('/fonts/atkinson-hyperlegible-next/AtkinsonHyperlegibleNext-Italic[wght].woff2') format('woff2-variations');
+  font-weight: 200 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- Intel One Mono — Static Weights --- */
+@font-face {
+  font-family: 'Intel One Mono';
+  src: url('/fonts/intel-one-mono/IntelOneMono-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Intel One Mono';
+  src: url('/fonts/intel-one-mono/IntelOneMono-LightItalic.woff2') format('woff2');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Intel One Mono';
+  src: url('/fonts/intel-one-mono/IntelOneMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Intel One Mono';
+  src: url('/fonts/intel-one-mono/IntelOneMono-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Intel One Mono';
+  src: url('/fonts/intel-one-mono/IntelOneMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Intel One Mono';
+  src: url('/fonts/intel-one-mono/IntelOneMono-MediumItalic.woff2') format('woff2');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Intel One Mono';
+  src: url('/fonts/intel-one-mono/IntelOneMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Intel One Mono';
+  src: url('/fonts/intel-one-mono/IntelOneMono-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- Font Size Overrides (×1.35 from Slidev defaults) --- */
+.slidev-layout {
+  font-size: 1.485rem;
+}
+
+:root {
+  --slidev-code-font-size: 16.2px;
+  --slidev-code-line-height: 24.3px;
+}
+
+.slidev-layout pre,
+.slidev-layout code {
+  font-weight: 500;
+}
