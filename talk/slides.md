@@ -18,6 +18,8 @@ colorSchema: both
 toc:
   maxDepth: 1
   minDepth: 1
+layout: cover
+background: /images/DSC_0719_DxO.jpg
 ---
 
 # Capture `*this`
