@@ -24,7 +24,7 @@ int main()
     std::function<int()> fn;
 
     {
-        Widget* w = new Widget();
+        Widget *w = new Widget();
         fn = w->get_lambda();
         std::cout << "while alive: " << fn() << '\n'; // OK: 42
         delete w;

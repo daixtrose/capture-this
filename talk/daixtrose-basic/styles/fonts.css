@@ -96,3 +96,17 @@
 .slidev-layout code {
   font-weight: 500;
 }
+
+/* --- Background Brightness Adaptation --- */
+.slidev-page.bg-bright .slidev-layout {
+  color: #111;
+}
+.slidev-page.bg-dark .slidev-layout {
+  color: white;
+}
+.slidev-page.bg-bright .slidev-layout code:not(pre code) {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+.slidev-page.bg-dark .slidev-layout code:not(pre code) {
+  background-color: rgba(0, 0, 0, 0.6);
+}

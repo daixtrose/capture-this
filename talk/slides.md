@@ -1,6 +1,6 @@
 ---
 theme: ./daixtrose-basic
-title: "Capture *this — Timeline of Change"
+title: "Capture *this — The Evolution of C++ Class Member Lambda Expressions"
 info: |
   ## Capture *this in Lambda Expressions
   A talk about the evolution of capturing `this` in C++ lambdas.
@@ -24,7 +24,7 @@ background: /images/DSC_0719_DxO.jpg
 
 # Capture `*this`
 
-Timeline of Change in C++ Lambda Expressions
+> ## The Evolution of C++ Class Member Lambda Expressions
 
 <div class="abs-br m-6 text-sm opacity-50">
   C++ User Group Aachen
@@ -35,24 +35,49 @@ Opening slide. Welcome the audience, introduce yourself, show QR codes.
 -->
 
 ---
+# background: /images/IMG_6732.JPEG
+layout: two-cols
+background: /images/IMG_7352.JPEG
 transition: fade-out
 ---
 
 # What This Talk Covers
 
-- How capturing `this` in lambdas evolved across C++ standards
-- C++11 — implicit capture of `this`
-- C++14 — init captures & workarounds
-- C++17 — `*this` capture by copy
-- C++20 — deprecation of implicit `this` in `[=]`
+How capturing `this` in lambdas evolved across C++ standards
 
-<br>
-
-Based on [Capture *this in lambda expression: Timeline of change](https://www.nextptr.com/tutorial/ta1430524603/capture-this-in-lambda-expression-timeline-of-change)
+- C++11 — `[this]` captures a pointer
+- C++14 — init-capture workaround `[self = *this]`
+- C++17 — `[*this]` capture by copy
+- C++20 — `[=]` implicit `this` deprecated
+- C++23 — deducing `this` (explicit object parameters)
+- C++26 — status quo, deprecation remains
 
 <!--
 Give a brief roadmap of what we'll cover.
 -->
+
+---
+transition: fade-out
+layoutClass: gap-16
+layout: two-cols
+---
+
+```cpp
+int main() {}
+````
+
+::right::
+
+![](/images/IMG_7223.JPEG)
+
+---
+layout: quote
+background: /images/DSC_0648.JPG
+---
+
+I love Deadlines. 
+
+I love the whooshy noise they make as they pass by.
 
 ---
 layout: two-cols
@@ -160,14 +185,91 @@ Magic Move animates between the code blocks to show the evolution.
 -->
 
 ---
-layout: center
-class: text-center
+
+# C++20: Deprecating Implicit `this` in `[=]`
+
+C++20 deprecated the implicit capture of `this` via `[=]` (P0806R2):
+
+```cpp {all|3|4|5|all}
+struct Widget {
+    int value = 42;
+    void f() {
+        auto a = [=]() { return value; };        // ⚠️ deprecated: captures this pointer
+        auto b = [=, this]() { return value; };   // ✅ explicit this pointer (C++20)
+        auto c = [=, *this]() { return value; };  // ✅ explicit copy of *this (C++17)
+    }
+};
+```
+
+<v-click>
+
+**Why?** `[=]` suggests "everything by value", but `this` is captured as a **pointer** (by reference, effectively). This is confusing and error-prone.
+
+</v-click>
+
+<v-click>
+
+`[=, this]` was made valid in C++20 (P0409R2) to provide a clean upgrade path.
+
+</v-click>
+
+<!--
+The deprecation resolves the inconsistency: [=] looked like value capture but captured this by reference.
+-->
+
 ---
 
-# Thank You!
+# C++23: Deducing `this` (P0847R7)
+
+C++23 introduces **explicit object parameters** — lambdas can now refer to themselves:
+
+````md magic-move {lines: true}
+```cpp
+// Before C++23: recursive lambda needs std::function
+std::function<int(int)> fib = [&fib](int n) -> int {
+    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+};
+```
+
+```cpp
+// C++23: deducing this — no std::function needed
+auto fib = [](this auto self, int n) -> int {
+    return n <= 1 ? n : self(n - 1) + self(n - 2);
+};
+```
+````
+
+<v-click>
+
+This doesn't change *capture* rules, but gives lambdas a **first-class `self` reference**.
+
+</v-click>
+
+<v-click>
+
+Also in C++23: **static lambdas** (P1169R4) — `[]() static { ... }` for capture-less lambdas.
+
+</v-click>
+
+<!--
+Deducing this is the biggest lambda change since C++11.
+It enables recursive lambdas, CRTP-like patterns, and more.
+-->
+
+---
+layout: center
+class: text-center
+background: /images/IMG_6545.JPEG
+---
+
+# The End
 
 [Source Code](https://github.com/daixtrose/capture-this) · [Slides Online](#)
 
 <div class="text-sm opacity-50 mt-4">
   C++ User Group Aachen — 2026
 </div>
+
+---
+
+Based on [Capture *this in lambda expression: Timeline of change](https://www.nextptr.com/tutorial/ta1430524603/capture-this-in-lambda-expression-timeline-of-change)
