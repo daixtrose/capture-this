@@ -57,7 +57,7 @@ compile_one() {
     if output=$(${RUNTIME} run --rm \
         -v "${PROJECT_ROOT}/src:/workspace/src:ro" \
         "${IMAGE_NAME}" \
-        -std=c++${std} -Wall -Wextra -Wpedantic \
+        g++ -std=c++${std} -Wall -Wextra -Wpedantic \
         -o /dev/null \
         "${src}" 2>&1); then
         echo -e "${GREEN}OK${NC}"

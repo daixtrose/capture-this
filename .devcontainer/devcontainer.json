@@ -1,0 +1,17 @@
+{
+    "name": "Capture *this — C++ & Slidev",
+    "build": {
+        "context": "..",
+        "dockerfile": "../container/Containerfile"
+    },
+    "forwardPorts": [3030],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "antfu.slidev"
+            ]
+        }
+    },
+    "postCreateCommand": "cd talk && pnpm install"
+}

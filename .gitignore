@@ -42,3 +42,8 @@
 
 # CMake build directories
 build/
+
+# Node.js / pnpm
+node_modules/
+.pnpm-store/
+talk/dist/
