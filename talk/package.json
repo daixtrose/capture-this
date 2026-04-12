@@ -9,5 +9,8 @@
   "dependencies": {
     "@slidev/cli": "latest",
     "@slidev/theme-default": "latest"
+  },
+  "devDependencies": {
+    "@shikijs/transformers": "^4.0.2"
   }
 }
