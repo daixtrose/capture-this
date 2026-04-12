@@ -16,6 +16,39 @@ You are a full-stack developer for the **"Capture *this"** talk project — a C+
 - Styles go in `talk/styles/` or `talk/daixtrose-basic/styles/`.
 - Run the dev server from `talk/`: `pnpm slidev` for preview, `pnpm slidev build` for static export, `pnpm slidev export` for PDF.
 
+#### Slidev Documentation
+Before implementing any Slidev feature, **fetch and read the relevant page(s)** from the official docs at `https://sli.dev/`. Key pages:
+
+- **Core Guides**
+  - https://sli.dev/guide/syntax — Markdown syntax, frontmatter, slides structure
+  - https://sli.dev/guide/animations — v-click, v-after, v-mark, Magic Move, transitions
+  - https://sli.dev/guide/layout — Using and selecting layouts
+  - https://sli.dev/guide/component — Using components in slides
+  - https://sli.dev/guide/theme-addon — Using themes and addons
+  - https://sli.dev/guide/global-context — $clicks, $nav, $page, $renderContext, $frontmatter
+  - https://sli.dev/guide/ui — Navigator, toolbar, sidebar, drawing
+  - https://sli.dev/guide/exporting — PDF/PPTX/PNG export
+  - https://sli.dev/guide/hosting — Static hosting, SPA build
+  - https://sli.dev/guide/faq — Common questions and troubleshooting
+- **Authoring Themes & Layouts**
+  - https://sli.dev/guide/write-theme — Writing a custom theme
+  - https://sli.dev/guide/write-layout — Writing custom layouts
+  - https://sli.dev/guide/write-addon — Writing addons
+- **Configuration**
+  - https://sli.dev/custom/ — Global configuration overview
+  - https://sli.dev/custom/directory-structure — Project directory structure
+  - https://sli.dev/custom/config-highlighter — Shiki highlighter config
+  - https://sli.dev/custom/config-vite — Vite and plugin config
+  - https://sli.dev/custom/config-vue — Vue app config
+  - https://sli.dev/custom/config-unocss — UnoCSS config
+  - https://sli.dev/custom/config-shortcuts — Keyboard shortcuts config
+  - https://sli.dev/custom/config-fonts — Font configuration
+  - https://sli.dev/custom/config-parser — Pre-parser config
+- **Built-in References**
+  - https://sli.dev/builtin/cli — CLI commands and options
+  - https://sli.dev/builtin/components — Built-in components (Arrow, VClick, VSwitch, etc.)
+  - https://sli.dev/builtin/layouts — Built-in layouts (center, cover, two-cols, etc.)
+
 ### 2. C++ Examples
 - Source files live in `src/src/` (e.g., `01_this_pointer.cpp`, `02_star_this.cpp`).
 - CMake project is at `src/CMakeLists.txt`. Follow best practices from *Professional CMake*.
@@ -29,7 +62,7 @@ You are a full-stack developer for the **"Capture *this"** talk project — a C+
 - When citing standard wording, always include the paper number (e.g., P0018R3) and the relevant section.
 
 ## Constraints
-- DO NOT add CDN references or external URL dependencies — the project must work fully offline.
+- **No external downloads at presentation time.** The built/served presentation must work fully offline with zero network requests — no CDN links, no Google Fonts, no remotely hosted assets. However, installing npm packages, fetching resources during development, and committing them into the repo is perfectly fine.
 - DO NOT modify files under `logs/` unless explicitly asked to persist a discussion.
 - DO NOT create content for slides without explicit user request (the user stays in the decision loop).
 - ALWAYS register new C++ source files in `src/CMakeLists.txt` when creating them.
