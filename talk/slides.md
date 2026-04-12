@@ -61,6 +61,362 @@ src: ./lambda_basics.md
 ---
 
 ---
+
+# Lambda Inside a Struct/Class
+
+````md magic-move {lines: true}
+```cpp
+#include <iostream>
+
+int main() {
+    int i = 42;
+    auto print = [=] () { std::cout << "i: " << i << '\n'; };
+    print();
+}
+```
+
+```cpp
+#include <iostream>
+
+struct C {
+    int i;
+
+    void process() {
+        auto print = [] () { std::cout << "i: " << i << '\n'; };
+        print();
+    }
+};  
+
+int main() {
+    C c{42};
+    c.process();
+}
+```
+
+<div v-show="$clicks === 0">
+<p>Output of program:</p>
+<pre><code>i: 42</code></pre>
+</div>
+````
+
+---
+
+# Lambda Inside a Struct/Class
+
+```cpp
+#include <iostream>
+
+struct C {
+    int i;
+    void process() {
+        auto print = [] () { std::cout << "i: " << i << '\n'; };
+        print();
+    }
+};  
+```
+
+```
+<source>: In lambda function:
+<source>:7:52: error: 'this' was not captured for this lambda function
+    7 |         auto print = [] () { std::cout << "i: " << i << '\n'; };
+      |                                                    ^
+<source>:7:52: error: invalid use of non-static data member 'C::i'
+<source>:4:9: note: declared here
+    4 |     int i;
+      |         ^
+```
+
+---
+
+# Lambda Inside a Struct/Class: C++11
+
+```cpp
+// highlight-word:[&]
+#include <iostream>
+
+struct C {
+    int i;
+    void process() {
+        auto print = [&] () { std::cout << "i: " << i << '\n'; };
+        print();
+    }
+};  
+
+int main() { C c{42}; c.process(); }
+```
+
+Output
+
+```
+i: 42
+```
+
+---
+
+# Lambda Inside a Struct/Class: C++11
+
+```cpp
+// highlight-word:[=]
+#include <iostream>
+
+struct C {
+    int i;
+    void process() {
+        auto print = [=] () { std::cout << "i: " << i << '\n'; };
+        print();
+    }
+};  
+
+int main() { C c{42}; c.process(); }
+```
+
+Output
+
+```
+i: 42
+```
+
+---
+
+# Lambda Inside a Struct/Class: C++11
+
+````md magic-move {lines: true}
+```cpp
+#include <iostream>
+
+struct C {
+    int i;
+    void process() {
+        auto print = [this] () { std::cout << "i: " << this->i << '\n'; };
+        //                                               ^
+        //                                               | 
+        print();
+    }
+};
+int main() { C c{42}; c.process();   
+```
+
+```cpp
+#include <iostream>
+
+struct C {
+    int i;
+    void process() {
+        auto print = [this] () { std::cout << "i: " << i << '\n'; };
+        //              ^                              ^
+        //              |                              |                                                
+        print();
+    }
+};
+int main() { C c{42}; c.process();   
+```
+````
+
+Output
+
+```
+i: 42
+```
+
+`this` is captured ***by value***, i.e. as ***pointer***. 
+
+---
+
+# C++11
+
+````md magic-move {lines: true}
+```cpp
+struct C {
+    int i;
+    void process() {
+        auto print = [this] () { std::cout << "i: " << i << '\n'; };
+        print();
+        ++i;
+        print();
+    }
+};  
+int main() { C c{42}; c.process(); }
+```
+
+```cpp
+struct C {
+    int i;
+    void process() {
+        auto print = [=] () { std::cout << "i: " << i << '\n'; };
+        print();
+        ++i;
+        print();
+    }
+};  
+int main() { C c{42}; c.process(); }
+```
+````
+
+<div v-show="$clicks === 1">
+<p>WTF: <code>this</code> is captured by value (aka pointer), and <code>i</code> is <code>this->i</code>.</p>
+<pre><code>i: 42 
+i: 43</code></pre>
+</div>
+
+---
+
+<div style="height: 100%; display: flex; align-items: center; justify-content: center">
+  <img src="/images/IMG_7223.JPEG" style="height: 80%">
+</div>
+
+---
+background: /images/IMG_9009.JPEG
+---
+
+# 3 Years Later ...
+
+---
+
+# How do I capture this by copy?
+
+Idea: use `*this` in capture arguments.
+
+```cpp
+// highlight-word:*this
+struct C { 
+    int i;
+    void process() {
+        auto print = [*this] () { std::cout << "i: " << i << '\n'; };
+        print(); 
+    } 
+};  
+```
+
+---
+
+# C++11: Cannot capture `this` by copy?
+
+```cpp
+// highlight-word:*this
+struct C { 
+    int i;
+    void process() {
+        auto print = [*this] () { std::cout << "i: " << i << '\n'; };
+```
+
+Compiler output for `gcc-6.1 -std=c++11`:
+
+```
+<source>: In member function 'void C::process()':
+<source>:7:23: error: expected identifier before '*' token
+         auto print = [*this] () { std::cout << "i: " << i << '\n'; };
+                       ^
+<source>: In lambda function:
+<source>:7:57: error: 'this' was not captured for this lambda function
+         auto print = [*this] () { std::cout << "i: " << i << '\n'; };
+                                                         ^
+<source>:7:57: error: invalid use of non-static data member 'C::i'
+<source>:4:9: note: declared here
+     int i;
+         ^
+Compiler returned: 1
+```
+
+---
+
+# C++17: Capture `*this` for a Copy!
+
+````md magic-move {lines: true}
+```cpp
+#include <iostream>
+
+struct C {
+    int i;
+    void process() {
+        auto print = [*this] () { 
+            std::cout << "i: " << i << '\n'; };
+        print(); i+=10; /* <- has no effect*/ print();
+    }
+};  
+int main() { C c{42}; c.process(); }
+```
+
+```cpp
+#include <iostream>
+
+struct C {                   // C++11 feature
+    int i;                   //   |          
+    void process() {         //   V
+        auto print = [*this] () mutable { 
+            ++i; std::cout << "i: " << i << '\n'; };
+        print(); i+=10; /* <- has no effect*/ print();
+    }
+};  
+int main() { C c{41}; c.process(); }
+```
+````
+
+Output (when compiled with `gcc-7.5 -std=c++17`):
+
+<div v-show="$clicks === 0">
+<pre><code>i: 42
+i: 42</code></pre>
+</div>
+
+<div v-show="$clicks === 1">
+<pre><code>i: 42
+i: 43</code> (inner increment has effect!)</pre>
+</div>
+
+---
+
+# XXX
+
+
+```cpp
+
+
+```
+
+---
+layout: quote
+background: /images/DSC_0648.JPG
+---
+
+Explicit is better than implicit.
+
+---
+background: /images/IMG_9009.JPEG
+---
+
+# 3 Years Later ...
+
+---
+
+# C++20: Deprecating Implicit `this` in `[=]`
+
+C++20 deprecated the implicit capture of `this` via `[=]` (P0806R2):
+
+```cpp {all|4,5|6,7|8,9|all}
+struct C {
+    int i = 42;
+    void f() {
+        // ⚠️ deprecated: captures this pointer
+        auto a = [=]() { return i; }; 
+        // ✅ explicit copy of *this (C++17)  
+        auto c = [=, *this]() { return i; };  
+        // ✅ explicit this pointer (C++20)       
+        auto b = [=, this]() { return i; }; 
+    }
+};
+```
+
+<div v-show="$clicks === 1">
+<p><b>Why?</b> <code>[=]</code> suggests "everything by value", but <code>this</code> is captured as a **pointer**. This is confusing and error-prone.</p>
+</div>
+
+<div v-show="$clicks === 3">
+<p><code>[=, this]</code> made valid in C++20 (P0409R2) to provide a clean upgrade path.</p>
+</div>
+
+
+
+---
 transition: fade-out
 layoutClass: gap-16
 layout: two-cols
