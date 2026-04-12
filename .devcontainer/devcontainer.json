@@ -4,7 +4,9 @@
         "context": "..",
         "dockerfile": "../container/Containerfile"
     },
-    "forwardPorts": [3030],
+    "forwardPorts": [
+        3030
+    ],
     "customizations": {
         "vscode": {
             "extensions": [
