@@ -1,10 +1,19 @@
-# Recap: What are Lambdas?
+---
+layout: cover
+background: /images/DSC_0648.JPG
+---
+
+# Recap: C++ $\lambda$ Basics
+
+---
+
+# What are Lambdas?
 
 Lambdas are `syntactic sugar` for **function objects**:
 
 ````md magic-move {lines: true}
 ```cpp
-#include <iostream>
+#include <iostream> // C++11
 
 struct C {
     int operator()() {
