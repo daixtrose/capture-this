@@ -272,7 +272,41 @@ background: /images/IMG_9009.JPEG
 
 ---
 
-# How do I capture this by copy?
+# C++14: How do I capture this by copy?
+
+Idea: use `self=*this` in capture arguments.
+
+```cpp
+// highlight-word:self=*this
+#include <iostream> 
+
+struct C { 
+    int i;
+    void process() {
+        auto print = [self=*this] () { std::cout << "i: " << self.i << '\n'; };
+        ++i;
+        print(); 
+    } 
+};  
+
+int main() { C c{41}; c.process(); }
+```
+
+Output:
+
+```
+i: 41
+```
+
+---
+background: /images/IMG_9009.JPEG
+---
+
+# 3 Years Later ...
+
+---
+
+# C++17: How do I capture this by copy?
 
 Idea: use `*this` in capture arguments.
 
@@ -538,11 +572,27 @@ Compiler returned: 1
 # Recursion With Lambdas
 
 ```cpp
+#include <print> 
+#include <functional> 
+
 // highlight-word:std::function<int(int)>
 //                             VVVV <--- Did you see [&fib]?!
 std::function<int(int)> fib = [&fib](int n) -> int { 
     return n <= 1 ? n : fib(n - 1) + fib(n - 2);
 };
+
+int main() { std::print("result: {}", fib(3)); }
+```
+
+```
+<source>:4:33: error: 'fib' cannot be captured because it does not have automatic storage duration
+    4 | std::function<int(int)> fib = [&fib](int n) -> int { 
+      |                                 ^
+<source>:4:25: note: 'fib' declared here
+    4 | std::function<int(int)> fib = [&fib](int n) -> int { 
+      |                         ^
+1 error generated.
+Compiler returned: 1
 ```
 
 ---
