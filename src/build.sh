@@ -49,7 +49,7 @@ build_container() {
 compile_one() {
     local std="$1"
     local example="$2"
-    local src="/workspace/src/src/${example}.cpp"
+    local src="/workspace/src/random_stuff/${example}.cpp"
 
     echo -en "  ${CYAN}C++${std}${NC} ${example} ... "
 
