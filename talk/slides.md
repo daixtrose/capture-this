@@ -380,6 +380,21 @@ background: /images/IMG_9009.JPEG
 
 # C++20: Deprecating Implicit `this` in `[=]`
 
+<div>
+
+The issue is that `this` is captured by value, but the value of `this` is a pointer. So "captured by value" means "captured by value of a pointer" which gives you indirect access to the original object — effectively reference semantics to the object's state.
+
+The trap is not that `[=]` violates its contract — it doesn't. It faithfully captures `this` by value. The trap is that the value of a pointer is an address, so you still mutate the original object through it. People read `[=]` as "I have my own copy of **everything**" but what they actually have is their own copy of a pointer to someone else's data.
+
+That's precisely why C++20 deprecated it — the semantics are technically correct but conceptually misleading.
+
+</div>
+
+
+---
+
+# C++20: Deprecating Implicit `this` in `[=]`
+
 C++20 deprecated the implicit capture of `this` via `[=]` (P0806R2):
 
 ```cpp {all|4,5|6,7|8,9|all}
@@ -403,6 +418,48 @@ struct C {
 <div v-show="$clicks === 3">
 <p><code>[=, this]</code> made valid in C++20 (P0409R2) to provide a clean upgrade path.</p>
 </div>
+
+---
+
+# C++20: Deprecating Implicit `this` in `[=]`
+
+Distinguish local variables and class members!
+
+```cpp {2,3,4|5,6|7,8|9,10|4,11,12|13,14|15,16|all}
+struct C {
+    int i = 42; // class member
+    void f() {
+        double x = 42.0; // local variable
+        // ⚠️ deprecated: captures this pointer
+        auto a = [=]() { /* access to copy of */ x; /* ref to member */ ++i;  }; 
+        // ✅ explicit copy of *this (C++17)  
+        auto c = [=, *this]() { /* access to copy of */ x; return i; };  
+        // ✅ explicit this pointer (C++20)       
+        auto b = [=, this]() { /* access to copy of */ x;  return i; }; 
+        // ✅ explicit copy of *this (C++17)  
+        auto d = [*this]() { /* ⚠️ no access to x ⚠️ */ return i; };
+        // ✅ local copy of this->i in lamdba 
+        auto e = [i = i]() { /* ⚠️ no access to x ⚠️ */ return i; };
+        // ✅ reference to this->i 
+        auto f = [&i = i]() { /* ⚠️ no access to x ⚠️ */ return i; };
+    }
+};
+```
+
+
+---
+
+# How to Access `i`
+
+| **Capture** | **What lambda holds** | **`i` refers to** | **`this` captured?** |
+|---|---|---|---|
+| `[this]` | `C*` (pointer) | `this->i` (original) | Yes |
+| `[*this]` | `C` (full copy) | `i` in copy of c | No (copy) |
+| `[i = i]` | `int i` (copy of member) | lambda's own `i` | No |
+| `[&i = i]` | `int&` (ref to member) | original `this->i` | No |
+| `[i]` |  ⛔ | ⛔ | not a local variable |
+| `[&i]` | ⛔ | ⛔ | not a local variable |
+
 
 ---
 background: /images/IMG_9009.JPEG
@@ -488,7 +545,15 @@ std::function<int(int)> fib = [&fib](int n) -> int {
 };
 ```
 
+---
+background: /images/IMG_6742.JPEG
+---
 
+---
+background: /images/IMG_7076.JPEG
+---
+
+> # "Remember the Vasa" (Bjarne Stroustrup)
 
 
 ---
@@ -524,7 +589,7 @@ It enables recursive lambdas, CRTP-like patterns, and more.
 
 ---
 
-# The End is Near
+# Recursive Lambda Calls Within A Class 
 
 ```cpp
 // highlight-word:this](this
@@ -552,7 +617,7 @@ i: 5, r: 2
 
 ---
 
-# The End is Near
+# Recursive Lambda Calls Within A Class 
 
 Output when compiling with `gcc-15.2 -std=c++23`:
 
@@ -575,6 +640,61 @@ See <https://gcc.gnu.org/bugs/> for instructions.
 Compiler returned: 1
 ```
 
+---
+layout: cover
+background: /images/IMG_8706.JPEG
+---
+
+# My Advice 
+
+---
+
+# Avoid `this` when possible
+
+```cpp
+// highlight-word:&i = i
+struct C {           // ┌----- `this` is gone
+    int i;           // | 
+    void process() { // |     ┌-- `this` is unavoidable  
+        i = 0;       // V     V   if you insist on lambda for recursion 
+        auto fib = [&i = i](this auto self, int n) -> int { /* ... */ }
+    // ...        
+```
+
+- Any kind of "*You must know what the deduction rules are and these depend on the compiler in use*" will drive you crazy and yields a maintenance hell.
+- Interesting: `[&i = i]` builds with `gcc`and `clang`!
+- Output when compiling with `clang-22.1.0` or `gcc-15.2 -std=c++23`:
+  ```
+  i: 5, r: 2
+  ```
+
+<!-- Full Code example -->
+
+<!-- #include <print> 
+
+struct C {           // ┌----- `this` is gone
+    int i;           // | 
+    void process() { // |     ┌-- `this` is unavoidable  
+        i = 0;       // V     V   if you insist on lambda for recursion 
+        auto fib = [&i = i](this auto self, int n) -> int { 
+            ++i; // count the calls
+            return n <= 1 ? n : self(n - 1) + self(n - 2);
+        };
+        auto r = fib(3);
+        std::println("i: {0}, r: {1}", i, r);
+    }
+};
+int main() { C c{41}; c.process(); } -->
+
+---
+background: /images/IMG_1507.JPEG
+---
+
+# Use the Latest and Greatest Compiler 
+
+Or quit. 
+
+Tell management that you do not want to stay in a company that is doomed.  
 
 
 ---
@@ -588,10 +708,11 @@ layoutClass: gap-16
 <br>
 <br>
 <br>
+<br>
 
->
->
 > # The End
+
+> ## Thank You for choosing C++ 
 
 
 ---
