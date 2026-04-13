@@ -49,13 +49,31 @@ Before implementing any Slidev feature, **fetch and read the relevant page(s)** 
   - https://sli.dev/builtin/components — Built-in components (Arrow, VClick, VSwitch, etc.)
   - https://sli.dev/builtin/layouts — Built-in layouts (center, cover, two-cols, etc.)
 
-### 2. C++ Examples
-- Source files live in `src/src/` (e.g., `01_this_pointer.cpp`, `02_star_this.cpp`).
-- CMake project is at `src/CMakeLists.txt`. Follow best practices from *Professional CMake*.
-- Each example is registered as a separate `add_executable()`.
-- Build helper: `src/build.sh` — supports per-standard builds (`./build.sh 17`) and per-target builds (`./build.sh 17 02_star_this`).
-- Standards tested: C++11, C++14, C++17, C++20.
-- Compiler flags: `-Wall -Wextra -Wpedantic` — warnings as errors to surface standard differences.
+### 2. C++ Examples & Tests
+- Source files live in `src/capture/` organized by topic and C++ standard:
+  - `test_{topic}_cxx{std}.cpp` — Boost.UT tests that compile and run
+  - `fail_{topic}_cxx{std}.cpp` — compile-failure tests (code must NOT compile under that standard)
+- Old examples from the initial setup are in `src/random_stuff/` for reference.
+- CMake project is at `src/CMakeLists.txt`. Follows Modern CMake (3.29+) best practices.
+- **Boost.UT** (v2.3.1) is fetched via `FetchContent`. Link with `Boost::ut`. Header: `<boost/ut.hpp>`.
+  - C++20 header-only, macro-free unit testing framework
+  - Key API: `"name"_test = [] { ... }`, `expect(42_i == value)`, UDL literals (`_i`, `_l`, `_d`), `that %` matchers
+  - Fatal assertions: `expect(fatal(expr))` or `(expr) >> fatal`
+  - Sections: `should("name") = [=] { ... }`
+  - BDD: `given/when/then`, `feature/scenario`
+  - Parameterized: `"test"_test = [](auto arg) { ... } | std::tuple{...}`
+- **Compile-failure tests** use ICM-style CMake pattern:
+  - `add_executable(... EXCLUDE_FROM_ALL ...)` — not built by default
+  - `add_test()` wraps `cmake --build --target ...` — expects build failure
+  - `set_tests_properties(... PROPERTIES WILL_FAIL TRUE)`
+  - Target gets `-pedantic-errors` to turn extensions into hard errors
+- CMake helpers in `CMakeLists.txt`:
+  - `add_ut_test(NAME SOURCE STD)` — add a UT test for a specific C++ standard
+  - `add_compile_fail_test(NAME SOURCE STD)` — add a must-not-compile test
+- Build helper: `src/build.sh` — supports per-standard builds (`./build.sh 17`) and per-target builds (`./build.sh 17 02_star_this`). Uses files in `random_stuff/`.
+- Standards tested: C++11, C++14, C++17, C++20, C++23.
+- Compiler flags: `-Wall -Wextra -Wpedantic` — warnings visible to surface standard differences.
+- Run tests: `cd src && cmake -B build && cmake --build build && ctest --test-dir build`
 
 ### 3. C++ Standards Research
 - Fetch and reference WG21 papers (e.g., open-std.org), cppreference.com, and the C++ standard draft on GitHub.
@@ -65,4 +83,4 @@ Before implementing any Slidev feature, **fetch and read the relevant page(s)** 
 - **No external downloads at presentation time.** The built/served presentation must work fully offline with zero network requests — no CDN links, no Google Fonts, no remotely hosted assets. However, installing npm packages, fetching resources during development, and committing them into the repo is perfectly fine.
 - DO NOT modify files under `logs/` unless explicitly asked to persist a discussion.
 - DO NOT create content for slides without explicit user request (the user stays in the decision loop).
-- ALWAYS register new C++ source files in `src/CMakeLists.txt` when creating them.
+- ALWAYS register new C++ source files in `src/CMakeLists.txt` when creating them — use `add_ut_test()` for tests that should pass, `add_compile_fail_test()` for tests that must not compile.
