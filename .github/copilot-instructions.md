@@ -16,6 +16,28 @@ When the user asks to persist a discussion, decision, or analysis to a log file 
 
 ### Automatic Persistence Rule
 
-**Every substantive answer** (detailed explanations, architecture discussions, design decisions, troubleshooting analyses, Q&A exchanges) **MUST be appended to the active session log file immediately after being sent to the user.** Do not wait for the user to ask. The active log file is the most recent file under `logs/` that matches the current session topic. If unsure which file, ask.
+**Every substantive answer** (detailed explanations, architecture discussions, design decisions, troubleshooting analyses, Q&A exchanges) **MUST be persisted to the active session log file.** The active log file is the most recent file under `logs/` that matches the current session topic. If unsure which file, ask.
 
 This applies to ALL multi-paragraph technical responses — not just when the user explicitly says "persist". The log is the project's institutional memory; if an answer isn't persisted, it's lost.
+
+### Persistence Workflow (mandatory)
+
+To prevent persistence from being forgotten under cognitive load, follow this strict order:
+
+1. **Before answering**, add a todo item: "Persist to log" (use the todo list tool).
+2. **Write the substantive content directly into the log file first** — compose the full answer (with heading, blockquoted user message, and response body) as an append to the log file. This is the _primary_ artifact.
+3. **Then respond to the user** with the same content or a concise summary referencing what was persisted.
+4. **Mark the "Persist to log" todo as completed.**
+
+The inversion matters: writing to the log is step 2, _before_ the chat reply. If the turn is interrupted or cut short, the log already has the content.
+
+### What Counts as Substantive
+
+Persist if the response contains **any** of:
+- A code block or compiler output
+- A table
+- More than two paragraphs of technical explanation
+- A design decision or recommendation
+- A new fact about C++ standards, Slidev, or the toolchain
+
+Do **not** persist: one-line confirmations ("Done."), file-edit acknowledgements, or purely mechanical tool output.
