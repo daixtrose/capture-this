@@ -364,16 +364,6 @@ i: 43</code> (inner increment has effect!)</pre>
 </div>
 
 ---
-
-# XXX
-
-
-```cpp
-
-
-```
-
----
 layout: quote
 background: /images/DSC_0648.JPG
 ---
@@ -414,30 +404,208 @@ struct C {
 <p><code>[=, this]</code> made valid in C++20 (P0409R2) to provide a clean upgrade path.</p>
 </div>
 
-
-
 ---
-transition: fade-out
-layoutClass: gap-16
-layout: two-cols
+background: /images/IMG_9009.JPEG
 ---
+
+# 3 Years Later ...
+---
+transition: none
+---
+
+# Recursion
+
+## Regular Function 
 
 ```cpp
-int main() {}
-````
+// In order to understand recursion you must first understand recursion.
+int fib(int n) {
+    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+};
+```
+
+---
+transition: none
+---
+
+# Recursion With Lambdas
+
+## Regular Function 
+
+```cpp
+// In order to understand recursion you must first understand recursion.
+int fib(int n) {
+    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+};
+```
+
+## Lambda? 
+
+```cpp
+// In order to understand recursion you must first understand recursion.
+auto fib = [](int n) -> int {
+    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+};
+```
+
+---
+transition: none
+---
+
+# Recursion With Lambdas
+
+## Lambda? 
+
+```cpp
+// In order to understand recursion you must first understand recursion.
+auto fib = [](int n) -> int {
+    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+};
+```
+
+Does not compile
+
+```
+<source>: In lambda function:
+<source>:4:25: error: use of 'fib' before deduction of 'auto'
+     return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+                         ^~~
+<source>:4:38: error: use of 'fib' before deduction of 'auto'
+     return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+                                      ^~~
+Compiler returned: 1
+```
+
+---
+
+# Recursion With Lambdas
+
+```cpp
+// highlight-word:std::function<int(int)>
+//                             VVVV <--- Did you see [&fib]?!
+std::function<int(int)> fib = [&fib](int n) -> int { 
+    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+};
+```
+
+
+
+
+---
+
+# C++23: Deducing `this` (P0847R7)
+
+C++23 introduces **explicit object parameters** — lambdas can now refer to themselves:
+
+```cpp
+// highlight-word:this auto self
+// C++23: deducing this — no std::function needed
+auto fib = [](this auto self, int n) -> int {
+    return n <= 1 ? n : self(n - 1) + self(n - 2);
+};
+```
+
+<v-click>
+
+This doesn't change *capture* rules, but gives lambdas a **first-class `self` reference**.
+
+</v-click>
+
+<v-click>
+
+Also in C++23: **static lambdas** (P1169R4) — `[]() static { ... }` for capture-less lambdas.
+
+</v-click>
+
+<!--
+Deducing this is the biggest lambda change since C++11.
+It enables recursive lambdas, CRTP-like patterns, and more.
+-->
+
+---
+
+# The End is Near
+
+```cpp
+// highlight-word:this](this
+#include <print>
+struct C {    
+    int i;
+    void process() {
+        i = 0; // - this + this is fine!
+        auto fib = [this](this auto self, int n) -> int {
+            ++i; // count the calls
+            return n <= 1 ? n : self(n - 1) + self(n - 2);
+        };
+
+        auto r = fib(3);
+        std::println("i: {0}, r: {1}", i, r);
+    } };
+int main() { C c{41}; c.process(); }
+```
+
+Output when compiling with `clang-22.1.0 -std=c++23`:
+
+```
+i: 5, r: 2
+```
+
+---
+
+# The End is Near
+
+Output when compiling with `gcc-15.2 -std=c++23`:
+
+```
+// highlight-word:internal compiler error: Segmentation fault
+<source>: In lambda function:
+<source>:10:15: internal compiler error: Segmentation fault
+   10 |             ++i; // count the calls
+      |               ^
+0x228dd45 diagnostic_context::diagnostic_impl(rich_location*, diagnostic_metadata const*, diagnostic_option_id, char const*, __va_list_tag (*) [1], diagnostic_t)
+	???:0
+0x229f296 internal_error(char const*, ...)
+	???:0
+0x8b860a lambda_expr_this_capture(tree_node*, int)
+	???:0
+[...]
+Please submit a full bug report, with preprocessed source (by using -freport-bug).
+Please include the complete backtrace with any bug report.
+See <https://gcc.gnu.org/bugs/> for instructions.
+Compiler returned: 1
+```
+
+
+
+---
+background: /images/IMG_6545.JPEG
+layout: two-cols
+layoutClass: gap-16
+---
 
 ::right::
 
-![](/images/IMG_7223.JPEG)
+<br>
+<br>
+<br>
+
+>
+>
+> # The End
+
 
 ---
-layout: quote
-background: /images/DSC_0648.JPG
----
 
-I love Deadlines. 
 
-I love the whooshy noise they make as they pass by.
+> [Source Code](https://github.com/daixtrose/capture-this) · [Slides Online](#)
+
+
+Based on [Capture *this in lambda expression: Timeline of change](https://www.nextptr.com/tutorial/ta1430524603/capture-this-in-lambda-expression-timeline-of-change)
+
+<div class="text-sm opacity-50 mt-4">
+  C++ User Group Aachen — 2026
+</div>
+
 
 ---
 layout: two-cols
@@ -474,162 +642,3 @@ int main() {
     // Output: 2 4 6 8 10
 }
 ```
-
----
-
-# C++11: Capturing `this`
-
-In C++11, lambdas can capture `this` — but only as a **pointer**:
-
-```cpp {all|5-7|all}
-struct Widget {
-    int value = 42;
-
-    void process() {
-        auto lambda = [this]() {
-            return value;  // accesses this->value
-        };
-        std::cout << lambda() << '\n';
-    }
-};
-```
-
-<v-click>
-
-**Problem:** If `Widget` is destroyed before the lambda runs, you get **dangling pointer** access.
-
-</v-click>
-
-<!--
-This is the genesis: C++11 lambdas could only capture this as a pointer.
--->
-
----
-
-# C++17: Capturing `*this` by Copy
-
-C++17 added `*this` capture — the lambda gets its **own copy** of the object:
-
-````md magic-move {lines: true}
-```cpp
-// C++11/14: captures 'this' pointer — dangling risk
-auto lambda = [this]() {
-    return value;
-};
-```
-
-```cpp
-// C++17: captures '*this' by value — safe copy
-auto lambda = [*this]() {
-    return value;  // accesses the copy
-};
-```
-
-```cpp
-// C++17: captures '*this' by value, needs mutable to modify
-auto lambda = [*this]() mutable {
-    value = 99;  // modifies the lambda's copy, not the original
-    return value;
-};
-```
-````
-
-<v-click>
-
-This is the key change! The lambda owns an **independent copy** of the object.
-
-</v-click>
-
-<!--
-Magic Move animates between the code blocks to show the evolution.
--->
-
----
-
-# C++20: Deprecating Implicit `this` in `[=]`
-
-C++20 deprecated the implicit capture of `this` via `[=]` (P0806R2):
-
-```cpp {all|3|4|5|all}
-struct Widget {
-    int value = 42;
-    void f() {
-        auto a = [=]() { return value; };        // ⚠️ deprecated: captures this pointer
-        auto b = [=, this]() { return value; };   // ✅ explicit this pointer (C++20)
-        auto c = [=, *this]() { return value; };  // ✅ explicit copy of *this (C++17)
-    }
-};
-```
-
-<v-click>
-
-**Why?** `[=]` suggests "everything by value", but `this` is captured as a **pointer** (by reference, effectively). This is confusing and error-prone.
-
-</v-click>
-
-<v-click>
-
-`[=, this]` was made valid in C++20 (P0409R2) to provide a clean upgrade path.
-
-</v-click>
-
-<!--
-The deprecation resolves the inconsistency: [=] looked like value capture but captured this by reference.
--->
-
----
-
-# C++23: Deducing `this` (P0847R7)
-
-C++23 introduces **explicit object parameters** — lambdas can now refer to themselves:
-
-````md magic-move {lines: true}
-```cpp
-// Before C++23: recursive lambda needs std::function
-std::function<int(int)> fib = [&fib](int n) -> int {
-    return n <= 1 ? n : fib(n - 1) + fib(n - 2);
-};
-```
-
-```cpp
-// C++23: deducing this — no std::function needed
-auto fib = [](this auto self, int n) -> int {
-    return n <= 1 ? n : self(n - 1) + self(n - 2);
-};
-```
-````
-
-<v-click>
-
-This doesn't change *capture* rules, but gives lambdas a **first-class `self` reference**.
-
-</v-click>
-
-<v-click>
-
-Also in C++23: **static lambdas** (P1169R4) — `[]() static { ... }` for capture-less lambdas.
-
-</v-click>
-
-<!--
-Deducing this is the biggest lambda change since C++11.
-It enables recursive lambdas, CRTP-like patterns, and more.
--->
-
----
-layout: center
-class: text-center
-background: /images/IMG_6545.JPEG
----
-
-# The End
-
-[Source Code](https://github.com/daixtrose/capture-this) · [Slides Online](#)
-
-<div class="text-sm opacity-50 mt-4">
-  C++ User Group Aachen — 2026
-</div>
-
----
-
-Based on [Capture *this in lambda expression: Timeline of change](https://www.nextptr.com/tutorial/ta1430524603/capture-this-in-lambda-expression-timeline-of-change)
