@@ -4,34 +4,43 @@
 #include <boost/ut.hpp>
 #include <functional>
 
-struct C {
+struct C
+{
     int i = 41;
 
-    std::function<int()> make_mutable_lambda() {
-        return [*this]() mutable {
+    std::function<int()> make_mutable_lambda()
+    {
+        return [*this]() mutable
+        {
             ++i;
             return i;
         };
     }
 };
 
-int main() {
+int main()
+{
     using namespace boost::ut;
 
-    "[*this] mutable increments the copy"_test = [] {
+    "[*this] mutable increments the copy"_test = []
+    {
         C c;
         auto fn = c.make_mutable_lambda();
 
         expect(42_i == fn()) << "first call: 41 + 1 = 42";
         expect(43_i == fn()) << "second call: 42 + 1 = 43";
-        expect(41_i == c.i)  << "original unchanged";
+        expect(41_i == c.i) << "original unchanged";
     };
 
-    "[*this] without mutable — i += 10 has no effect"_test = [] {
-        struct S {
+    "[*this] without mutable — i += 10 has no effect"_test = []
+    {
+        struct S
+        {
             int i = 42;
-            std::function<int()> make() {
-                return [*this]() { return i; };
+            std::function<int()> make()
+            {
+                return [*this]()
+                { return i; };
             }
         };
 

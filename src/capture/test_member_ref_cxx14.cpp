@@ -4,18 +4,23 @@
 #include <boost/ut.hpp>
 #include <functional>
 
-struct C {
+struct C
+{
     int i = 42;
 
-    std::function<int()> make() {
-        return [&i = i]() { return i; };
+    std::function<int()> make()
+    {
+        return [&i = i]()
+        { return i; };
     }
 };
 
-int main() {
+int main()
+{
     using namespace boost::ut;
 
-    "[&i = i] binds a reference to the member"_test = [] {
+    "[&i = i] binds a reference to the member"_test = []
+    {
         C c;
         auto fn = c.make();
 
@@ -24,11 +29,15 @@ int main() {
         expect(99_i == fn()) << "reference follows the member";
     };
 
-    "[i = i] copies the member value"_test = [] {
-        struct S {
+    "[i = i] copies the member value"_test = []
+    {
+        struct S
+        {
             int i = 42;
-            std::function<int()> make() {
-                return [i = i]() { return i; };
+            std::function<int()> make()
+            {
+                return [i = i]()
+                { return i; };
             }
         };
 

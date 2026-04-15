@@ -3,18 +3,23 @@
 #include <boost/ut.hpp>
 #include <functional>
 
-struct Widget {
+struct Widget
+{
     int value = 42;
 
-    std::function<int()> get_lambda() {
-        return [self = *this]() { return self.value; };
+    std::function<int()> get_lambda()
+    {
+        return [self = *this]()
+        { return self.value; };
     }
 };
 
-int main() {
+int main()
+{
     using namespace boost::ut;
 
-    "[self=*this] captures a copy of the object"_test = [] {
+    "[self=*this] captures a copy of the object"_test = []
+    {
         Widget w;
         auto fn = w.get_lambda();
         expect(42_i == fn());

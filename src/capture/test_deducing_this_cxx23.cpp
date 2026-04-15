@@ -3,11 +3,14 @@
 
 #include <boost/ut.hpp>
 
-int main() {
+int main()
+{
     using namespace boost::ut;
 
-    "deducing this: recursive lambda"_test = [] {
-        auto fib = [](this auto self, int n) -> int {
+    "deducing this: recursive lambda"_test = []
+    {
+        auto fib = [](this auto self, int n) -> int
+        {
             return n <= 1 ? n : self(n - 1) + self(n - 2);
         };
 
@@ -19,11 +22,15 @@ int main() {
         expect(8_i == fib(6));
     };
 
-    "deducing this with [&i = i] in a class"_test = [] {
-        struct C {
+    "deducing this with [&i = i] in a class"_test = []
+    {
+        struct C
+        {
             int i = 0;
-            void process() {
-                auto fib = [&i = i](this auto self, int n) -> int {
+            void process()
+            {
+                auto fib = [&i = i](this auto self, int n) -> int
+                {
                     ++i;
                     return n <= 1 ? n : self(n - 1) + self(n - 2);
                 };

@@ -4,17 +4,28 @@
 #include <boost/ut.hpp>
 #include <functional>
 
-struct Widget {
+struct Widget
+{
     int value = 42;
 
-    std::function<int()> get_lambda_ptr()  { return [this]()  { return value; }; }
-    std::function<int()> get_lambda_copy() { return [*this]() { return value; }; }
+    std::function<int()> get_lambda_ptr()
+    {
+        return [this]()
+        { return value; };
+    }
+    std::function<int()> get_lambda_copy()
+    {
+        return [*this]()
+        { return value; };
+    }
 };
 
-int main() {
+int main()
+{
     using namespace boost::ut;
 
-    "[*this] survives object destruction"_test = [] {
+    "[*this] survives object destruction"_test = []
+    {
         std::function<int()> fn;
         {
             Widget w;

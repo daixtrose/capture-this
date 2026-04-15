@@ -2,15 +2,19 @@
 
 #include <functional>
 
-struct Widget {
+struct Widget
+{
     int value = 42;
 
-    std::function<int()> get_lambda() {
-        return [*this]() { return value; };
+    std::function<int()> get_lambda()
+    {
+        return [*this]()
+        { return value; };
     }
 };
 
-int main() {
+int main()
+{
     Widget w;
     auto fn = w.get_lambda();
     return fn() != 42;

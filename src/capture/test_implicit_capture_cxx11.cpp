@@ -4,17 +4,28 @@
 #include <boost/ut.hpp>
 #include <functional>
 
-struct C {
+struct C
+{
     int i = 42;
 
-    std::function<int()> capture_by_eq()  { return [=]() { return i; }; }
-    std::function<int()> capture_by_ref() { return [&]() { return i; }; }
+    std::function<int()> capture_by_eq()
+    {
+        return [=]()
+        { return i; };
+    }
+    std::function<int()> capture_by_ref()
+    {
+        return [&]()
+        { return i; };
+    }
 };
 
-int main() {
+int main()
+{
     using namespace boost::ut;
 
-    "[=] implicitly captures this as pointer"_test = [] {
+    "[=] implicitly captures this as pointer"_test = []
+    {
         C c;
         auto fn = c.capture_by_eq();
         expect(42_i == fn());
@@ -23,7 +34,8 @@ int main() {
         expect(99_i == fn()) << "[=] sees mutation — it's a pointer, not a copy!";
     };
 
-    "[&] implicitly captures this as pointer"_test = [] {
+    "[&] implicitly captures this as pointer"_test = []
+    {
         C c;
         auto fn = c.capture_by_ref();
         expect(42_i == fn());
@@ -32,11 +44,15 @@ int main() {
         expect(99_i == fn());
     };
 
-    "[=] WTF: ++i between calls is visible"_test = [] {
-        struct S {
+    "[=] WTF: ++i between calls is visible"_test = []
+    {
+        struct S
+        {
             int i = 42;
-            std::function<int()> make() {
-                return [=]() { return i; };
+            std::function<int()> make()
+            {
+                return [=]()
+                { return i; };
             }
         };
 

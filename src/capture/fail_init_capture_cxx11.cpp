@@ -3,15 +3,19 @@
 
 #include <functional>
 
-struct Widget {
+struct Widget
+{
     int value = 42;
 
-    std::function<int()> get_lambda() {
-        return [self = *this]() { return self.value; };
+    std::function<int()> get_lambda()
+    {
+        return [self = *this]()
+        { return self.value; };
     }
 };
 
-int main() {
+int main()
+{
     Widget w;
     auto fn = w.get_lambda();
     return fn() != 42;

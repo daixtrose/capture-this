@@ -2,16 +2,20 @@
 
 #include <functional>
 
-struct Widget {
+struct Widget
+{
     int value = 42;
 
-    std::function<int()> get_lambda() {
+    std::function<int()> get_lambda()
+    {
         int local = 10;
-        return [=, this]() { return value + local; };
+        return [=, this]()
+        { return value + local; };
     }
 };
 
-int main() {
+int main()
+{
     Widget w;
     auto fn = w.get_lambda();
     return fn() != 52;
