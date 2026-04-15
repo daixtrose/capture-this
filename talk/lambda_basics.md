@@ -74,7 +74,7 @@ int main()
 
 ---
 
-# Lambdas Binding by Value 
+# Lambdas Capturing by Value 
 
 ```cpp
 // highlight-word:[=]
@@ -82,40 +82,40 @@ int main()
 
 int main() {
     int i = 41;
-    // bind by value
+    // capture by value
     auto get_41 = [=] () { return i; };
     ++i;
-    // bind by value again, drop () which is not necessary for empty arg list
+    // capture by value again, drop () which is not necessary for empty arg list
     auto get_42 = [=] { return i; };
-    std::println("first bind: {}", get_41());
-    std::println("second bind: {}", get_42());
+    std::println("first capture: {}", get_41());
+    std::println("second capture: {}", get_42());
 }
 ```
 
 Output:
 
 ```
-first bind: 41 
-second bind: 42
+first capture: 41 
+second capture: 42
 ```
 
 ---
 
-# Lambdas Binding by Reference 
+# Lambdas Capturing by Reference 
 
-```cpp
+```cppg
 // highlight-word:[&]
 #include <print>
 
 int main() {
     int i = 41;
-    // bind by value
+    // capture by value
     auto get_41 = [&] { return i; };
     ++i;
-    // bind by value again
+    // capture by value again
     auto get_42 = [&] { return i; };
-    std::println("first bind: {}", get_41());
-    std::println("second bind: {}", get_42());
+    std::println("first capture: {}", get_41());
+    std::println("second capture: {}", get_42());
 }
 ```
 
@@ -123,14 +123,14 @@ Output:
 
 ``` {1}
 // highlight-word:// <-- Ouch!
-first bind: 42 // <-- Ouch!
-second bind: 42
+first capture: 42 // <-- Ouch!
+second capture: 42
 ```
 
 
 ---
 
-# Lambdas With Bindings And Arguments
+# Lambdas With Capturings And Arguments
 
 ```cpp
 // highlight-word:(int & refI)
@@ -138,10 +138,10 @@ second bind: 42
 
 int main() {
     int i = 41;
-    // bind by value
+    // capture by value
     auto print_1 = [=] (int & refI) { std::println("i: {0}, refI: {1}", i, refI); };
     ++i;
-    // bind by value again
+    // capture by value again
     auto print_2 = [=] (int & refI) { std::println("i: {0}, refI: {1}", i, refI); };
 
     print_1(i);
@@ -158,7 +158,7 @@ i: 42, refI: 42
 
 ---
 
-# Lambdas Individual Binding  
+# Lambdas Individual Capturing  
 
 ```cpp
 // highlight-word:&d
@@ -185,7 +185,7 @@ i: 42, d: 42.00
 
 ---
 
-# Lambdas Binding to New Name  
+# Lambdas Capturing to New Name  
 
 ```cpp
 // highlight-word:x=u
