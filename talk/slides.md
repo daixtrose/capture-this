@@ -35,28 +35,6 @@ Opening slide. Welcome the audience, introduce yourself, show QR codes.
 -->
 
 ---
-layout: two-cols
-background: /images/IMG_7352.JPEG
-transition: fade-out
----
-
-# What This Talk Covers
-
-How capturing `this` in lambdas evolved across C++ standards
-
-- C++11 — `[this]` captures a pointer
-- C++14 — init-capture workaround `[self = *this]`
-- C++17 — `[*this]` capture by copy
-- C++20 — `[=]` implicit `this` deprecated
-- C++23 — `this`? deducing `this`! 
-- C++26 — `this` is it. 
-  <br>What are deprecations anyway?
-
-<!--
-Give a brief roadmap of what we'll cover.
--->
-
----
 src: ./lambda_basics.md
 ---
 
@@ -745,6 +723,28 @@ background: /images/IMG_1507.JPEG
 Or quit. 
 
 Tell management that you do not want to stay in a company that is doomed.  
+
+---
+layout: two-cols
+background: /images/IMG_7352.JPEG
+transition: fade-out
+---
+
+# Summary
+
+How capturing `this` in lambdas evolved across C++ standards
+
+- C++11 — `[this]` captures a pointer
+- C++14 — init-capture workaround `[self = *this]`
+- C++17 — `[*this]` capture by copy
+- C++20 — `[=]` implicit `this` deprecated
+- C++23 — `this`? deducing `this`! 
+- C++26 — `this` is it. 
+  <br>What are deprecations anyway?
+
+<!--
+Give a brief roadmap of what we'll cover.
+-->
 
 
 ---
