@@ -31,23 +31,16 @@ Open **http://localhost:3030** in your browser.
 
 No `--privileged` flag is needed — standard port mapping is sufficient. The `--remote` flag makes Slidev bind to `0.0.0.0` so it's reachable from outside the container.
 
-## C++ Examples & Tests
+## C++ Examples
 
-The `src/capture/` directory contains [Boost.UT](https://github.com/boost-ext/ut) tests and compile-failure tests for every capture pattern discussed in the talk. Build and run with CMake:
+Compile all examples across C++11/14/17/20:
 
 ```bash
 cd src
-cmake -B build
-cmake --build build -j$(nproc)
-ctest --test-dir build --output-on-failure
-```
-
-The legacy standalone examples are in `src/random_stuff/` and can still be built with the old script:
-
-```bash
 bash build.sh          # Build all examples with all standards
 bash build.sh 17       # Build all examples with C++17 only
 bash build.sh 17 02_star_this  # Build one example with one standard
+bash build.sh container        # Only rebuild the container image
 ```
 
 ## VS Code Dev Container
@@ -56,7 +49,7 @@ A [Dev Container](.devcontainer/devcontainer.json) configuration is included. Wi
 
 1. **Ctrl+Shift+P** → *Dev Containers: Reopen in Container*
 2. The container builds automatically, installs dependencies, and forwards port 3030
-3. Run `cd talk && pnpm slidev --remote` or click the **Slidev** extension button in the sidebar to start the presentation
+3. Run `cd talk && pnpm slidev --remote` to start the presentation
 
 The Dev Container includes the **Slidev** and **C++ Tools** extensions. The Slidev extension's slide preview, navigation, and presenter mode all work natively inside the container — no additional configuration needed.
 
@@ -86,11 +79,7 @@ To return to your local environment: **Ctrl+Shift+P** → *Dev Containers: Reope
 │       ├── fonts/                # WOFF2 fonts (offline, no CDN)
 │       └── images/               # Background images
 ├── src/
-│   ├── CMakeLists.txt            # Modern CMake with FetchContent (Boost.UT)
-│   ├── capture/                  # Boost.UT tests & compile-failure tests
-│   │   ├── test_*_cxx{NN}.cpp   # Tests that compile and run
-│   │   └── fail_*_cxx{NN}.cpp   # Tests that must NOT compile (ICM-style)
-│   ├── random_stuff/             # Legacy standalone examples (01–06)
-│   └── build.sh                  # Legacy per-standard build script
+│   ├── src/                      # C++ example files (01–06)
+│   └── build.sh                  # Container-based compilation script
 └── logs/                         # Session logs
 ```
