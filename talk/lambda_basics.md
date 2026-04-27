@@ -103,7 +103,7 @@ second capture: 42
 
 # Lambdas Capturing by Reference 
 
-```cppg
+```cpp
 // highlight-word:[&]
 #include <print>
 
