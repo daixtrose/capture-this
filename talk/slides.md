@@ -14,6 +14,7 @@ fonts:
 drawings:
   persist: false
 transition: fade-out
+routerMode: hash
 colorSchema: both
 toc:
   maxDepth: 1
