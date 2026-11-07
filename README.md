@@ -20,9 +20,11 @@ docker build -t capture-this-gcc15 -f container/Containerfile .
 
 # Start the slide presentation
 docker run --rm -p 3030:3030 \
+    --user "$(id -u):$(id -g)" \
     -v "$(pwd)":/workspace \
     -w /workspace/talk \
     -e CI=true \
+    -e HOME=/tmp \
     capture-this-gcc15 \
     bash -c "pnpm install && pnpm slidev --remote --port 3030"
 ```
@@ -30,6 +32,8 @@ docker run --rm -p 3030:3030 \
 Open **http://localhost:3030** in your browser.
 
 No `--privileged` flag is needed — standard port mapping is sufficient. The `--remote` flag makes Slidev bind to `0.0.0.0` so it's reachable from outside the container.
+
+`--user "$(id -u):$(id -g)"` runs the container as your own user, so everything it writes into the mounted repository (`node_modules`, build output, watermarked images) stays owned by you instead of root. Without it, files created by the container can only be modified with `sudo` afterwards. `HOME=/tmp` gives pnpm a writable home directory for its store and cache, since that uid has no home inside the image.
 
 ## C++ Examples
 
